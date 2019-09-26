@@ -13,7 +13,8 @@ var getGitHubProfile = function(user, callback) {
   var options = {
     url: 'https://api.github.com/users/' + user,
     headers: { 'User-Agent': 'request' },
-    json: true  // will JSON.parse(body) for us
+    // will JSON.parse(body) for us
+    json: true
   };
 
   request.get(options, function(err, res, body) {
