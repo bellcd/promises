@@ -35,12 +35,12 @@ describe('Basic chaining', function() {
       fs.writeFileSync(fileToWriteTo, '');
     });
 
-    it('should return the promise created by the entire chain', function() {
-      // Make sure you return the chain! This will allow you to keep chaining promises
-      // once the file has successfully been written
-      // Must return a Bluebird promise. ES6 promise won't work here
-      expect(fetchProfileAndWriteToFile(fileWithGithubHandle, fileToWriteTo)).to.be.an.instanceOf(Promise);
-    });
+    // it('should return the promise created by the entire chain', function() {
+    //   // Make sure you return the chain! This will allow you to keep chaining promises
+    //   // once the file has successfully been written
+    //   // Must return a Bluebird promise. ES6 promise won't work here
+    //   expect(fetchProfileAndWriteToFile(fileWithGithubHandle, fileToWriteTo)).to.be.an.instanceOf(Promise);
+    // });
 
     it('should eventually write a GitHub profile to a file', function(done) {
       fetchProfileAndWriteToFile(fileWithGithubHandle, fileToWriteTo)
@@ -50,6 +50,13 @@ describe('Basic chaining', function() {
           done();
         })
         .catch(done);
+    });
+
+    it('should return the promise created by the entire chain', function() {
+      // Make sure you return the chain! This will allow you to keep chaining promises
+      // once the file has successfully been written
+      // Must return a Bluebird promise. ES6 promise won't work here
+      expect(fetchProfileAndWriteToFile(fileWithGithubHandle, fileToWriteTo)).to.be.an.instanceOf(Promise);
     });
 
     afterEach(function() {
