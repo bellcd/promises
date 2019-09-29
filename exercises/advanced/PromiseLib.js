@@ -3,7 +3,7 @@ var Promise = require('bluebird');
 
 /**
  * Return a function that wraps `nodeStyleFn`. When the returned function is invoked,
- * it will return a promise which will be resolved or rejected, depending on 
+ * it will return a promise which will be resolved or rejected, depending on
  * the execution of the now-wrapped `nodeStyleFn`
  *
  * In other words:
@@ -15,7 +15,20 @@ var Promise = require('bluebird');
  */
 
 var promisify = function(nodeStyleFn) {
- // TODO
+  //returning a function that:
+  //accepts an indefinite number of arguments
+  //returns a promise
+  return (...args) => {
+    return new Promise((resolve, reject) => {
+      //the Promise's callback invokes nodeStyleFn with however many arguments are given
+      //NOTE: the nodeStyleFn is STILL INVOKED WITH A CALLBACK.
+      //A main difference with this promise pattern is that instead of invoking some other callback with either err/data, err/data are invoke with reject/resolve.
+      nodeStyleFn(...args, (err, data) => {
+        if (err) { reject(err); }
+        resolve(data);
+      });
+    });
+  };
 };
 
 
@@ -31,9 +44,37 @@ var promisify = function(nodeStyleFn) {
  */
 
 var all = function(arrayOfPromises) {
-  // TODO
-};
+  return new Promise((resolve, reject) => {
+    let values = [];
+    let returnValue;
+    let placeholder;
+    //reduce through the arrayOfPromises, adding each resolved value to the value array AFTER that promise has resolved
+    // [p1, p2, p3]
+    // [p1.then((v1) => p2).then((v2) => p3).then((v3) => )] // [v1, v2, v3]
 
+    // TODO: there's currently an unhandled exception, possibly because each subsequent promise in the array waits on the promise before its resolve/reject, before invoking its own .then block. How to change this??
+    arrayOfPromises.reduce((acc, currentValue, i) => {
+      if (acc === null) {
+        placeholder = currentValue;
+      } else {
+        placeholder = acc;
+      }
+      return placeholder
+        .catch((err) => {
+          reject(err);
+        })
+        .then((data) => {
+          values[i] = (data);
+          if (i === arrayOfPromises.length - 1) {
+            resolve(values);
+          } else {
+            returnValue = arrayOfPromises[++i];
+          }
+          return returnValue;
+        });
+    }, null);
+  });
+};
 
 /**
  * Given an array of promises, return a promise that is resolved or rejected,
@@ -42,7 +83,18 @@ var all = function(arrayOfPromises) {
  */
 
 var race = function(arrayOfPromises) {
-  // TODO
+  // add .then blocks to each promise, that call resolve/reject when their respective promises resolve/reject
+  return new Promise((resolve, reject) => {
+    arrayOfPromises.forEach((promise) => {
+      promise
+        .then((data) => {
+          resolve(data);
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  });
 };
 
 // Export these functions so we can unit test them
