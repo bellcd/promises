@@ -1,2 +1,5 @@
 .DS_Store
 node_modules
+
+# API keys
+/lib/apiKeys.js
