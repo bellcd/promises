@@ -10,4 +10,5 @@ describe('Advanced Content', function() {
   require('./advanced/collections.test.js');
   require('./advanced/advancedChaining.test.js');
   require('./advanced/PromiseLib.test.js');
+  // require('../lib/apiKeys.js');
 });
